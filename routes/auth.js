@@ -1,13 +1,12 @@
 const router = require('express').Router();
 const { userController } = require('../controller');
-const { RegisterValidation, LoginValidation } = require('../helper').validations;
-
+const { validations, encryption } = require('../helper');
 
 router.post('/register', async (req, res) => {
 
-    const { error } = RegisterValidation(req.body);
+    const error = validations.RegisterValidation(req.body);
     if (error)
-        return res.status(400).send(error.details[0].message);
+        return res.status(400).send(error);
 
     try {
         const emailExists = await userController.get(req.body.email);
@@ -23,8 +22,20 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', (req, res) => {
-    res.send("login");
+router.post('/login', async (req, res) => {
+
+    const error = validations.LoginValidation(req.body);
+    if (error) return res.status(400).send(error);
+
+    const findUser = await userController.get(req.body.email);
+
+    if (
+        findUser &&
+        await encryption.comparePassword(req.body.password, findUser.password)
+    )
+        res.status(200).send("Successfull");
+    else
+        res.send('Email/Password mismatch!');
 })
 
 
