@@ -16,7 +16,7 @@ require('mongoose')
         }
     );
 
-app.use(require('./routes'));
+app.use('/api', require('./routes'));
 
 app.listen(3000, () => {
     console.log('Server Up and running');

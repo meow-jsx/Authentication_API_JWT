@@ -1,4 +1,5 @@
-module.exports= {
+module.exports = {
     validations: require('./validation'),
-    encryption: require('./bcrypt')
+    encryption: require('./bcrypt'),
+    jwt: require('./jwt')
 }

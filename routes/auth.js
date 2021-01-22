@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { userController } = require('../controller');
-const { validations, encryption } = require('../helper');
+const { validations, encryption, jwt } = require('../helper');
 
 router.post('/register', async (req, res) => {
 
@@ -32,8 +32,12 @@ router.post('/login', async (req, res) => {
     if (
         findUser &&
         await encryption.comparePassword(req.body.password, findUser.password)
-    )
-        res.status(200).send("Successfull");
+    ) {
+        res
+            .status(200)
+            .header('auth-token', jwt.sign({ key: findUser.id }))
+            .send("Authorized for 1 day");
+    }
     else
         res.send('Email/Password mismatch!');
 })
