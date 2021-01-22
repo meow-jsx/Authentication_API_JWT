@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const RegisterValidation = (input) => {
-    return Joi.object(
+    let { error } = Joi.object(
         {
             name:
                 Joi.string()
@@ -24,17 +24,18 @@ const RegisterValidation = (input) => {
         }
     ).with('email', 'password')
         .validate(input);
+    return error ? error.details[0].message : error
 }
 
 const LoginValidation = (input) => {
 
-    const LoginSchema = Joi.object({
+    let { error } = Joi.object({
         email:
             Joi.string()
                 .email()
                 .min(3)
                 .max(16)
-                .require()
+                .required()
                 .messages({
                     'string.empty': 'خالی نذار!'
                 }),
@@ -43,9 +44,9 @@ const LoginValidation = (input) => {
                 .min(6)
                 .max(256)
                 .required()
-    }).with('email', 'password');
+    }).validate(input);
 
-    return LoginSchema.validate(input);
+    return error ? error.details[0].message : error;
 }
 
 module.exports = {
